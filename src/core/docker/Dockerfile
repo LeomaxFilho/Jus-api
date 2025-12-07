@@ -1,4 +1,4 @@
-FROM postgres
+FROM pgvector/pgvector
 
 WORKDIR /
 
