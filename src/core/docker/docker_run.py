@@ -1,11 +1,13 @@
 import os
+import sys
 
-import docker.errors
+from docker.client import DockerClient
+from docker.errors import DockerException, NotFound
+from docker.models.containers import Container
 from dotenv import load_dotenv
 
 try:
     import docker
-    import docker.errors
 except ImportError as exc:
     raise ImportError(
         """Couldn't import Docker. Are you sure it's installed and /
@@ -14,16 +16,21 @@ except ImportError as exc:
     ) from exc
 
 
-def start_docker_container():
+def start_docker_container() -> Container:
     _ = load_dotenv()
 
     """starts a docker image with SQL database"""
-    client = docker.from_env()
+    try:
+        client: DockerClient = docker.from_env()
+
+    except DockerException as exc:
+        print(f'Something wrong was ocurred {exc}')
+        sys.exit(1)
 
     CONTAINER_NAME = 'laws'
-    IMAGE_NAME = 'laws_POSTESQL'
+    IMAGE_NAME = 'laws-postegresql:latest'
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-    DOCKERFILE_PATH = 'docker/'
+    DOCKERFILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
     try:
         _ = client.images.build(
@@ -33,23 +40,23 @@ def start_docker_container():
         )
     except Exception as e:
         print(f'\uea87 Build image error: {e}')
-        raise
+        sys.exit(1)
 
     try:
-        container = client.containers.get(CONTAINER_NAME)
+        container: Container = client.containers.get(CONTAINER_NAME)
+        container.reload()
 
         if container.status != 'running':
             print(f'\ueb7b Starting Container, Already exists: {CONTAINER_NAME}...')
-
             container.start()
-
         else:
             print(f'\uf058 Container is already running: {CONTAINER_NAME}.')
 
-    except docker.errors.NotFound:
+    except NotFound:
         print(f'\uf058 Container is running: {CONTAINER_NAME}.')
+
         try:
-            _ = client.containers.run(
+            running_container = client.containers.run(
                 image=IMAGE_NAME,
                 name=CONTAINER_NAME,
                 auto_remove=True,
@@ -60,6 +67,24 @@ def start_docker_container():
 
             print('\uf058 Container criado e iniciado com sucesso.')
 
+            return running_container
+
         except Exception as e:
             print(f'\uea87 Star/Creating container error: {e}')
-            return
+            sys.exit(1)
+
+
+def stop_docker_container(container: Container):
+    try:
+        container.stop()
+        print('Container stoped')
+
+    except NotFound:
+        print('Container already stoped')
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    container = start_docker_container()
+
+    # stop_docker_container(container)
