@@ -24,7 +24,7 @@ class Law(models.Model):
     number: models.IntegerField = models.IntegerField()
 
     id_status: models.ForeignKey = models.ForeignKey(
-        Status, on_delete=models.CASCADE, related_name='status'
+        Status, on_delete=models.CASCADE, related_name='law'
     )
 
 
@@ -35,13 +35,15 @@ class Article(models.Model):
 
     last_change: models.DateField = models.DateField()
 
-    id_law: models.ForeignKey = models.ForeignKey(Law, on_delete=models.CASCADE, related_name='law')
+    id_law: models.ForeignKey = models.ForeignKey(
+        Law, on_delete=models.CASCADE, related_name='article'
+    )
 
     id_theme: models.ForeignKey = models.ForeignKey(
-        Theme, on_delete=models.CASCADE, related_name='theme'
+        Theme, on_delete=models.CASCADE, related_name='article'
     )
     id_status: models.ForeignKey = models.ForeignKey(
-        Status, on_delete=models.CASCADE, related_name='status'
+        Status, on_delete=models.CASCADE, related_name='article'
     )
 
 
@@ -53,5 +55,5 @@ class Paragraph(models.Model):
     paragraph_number: models.IntegerField = models.IntegerField()
 
     id_article: models.ForeignKey = models.ForeignKey(
-        Article, on_delete=models.CASCADE, related_name='article', primary_key=True
+        Article, on_delete=models.CASCADE, related_name='paragraph', primary_key=True
     )
