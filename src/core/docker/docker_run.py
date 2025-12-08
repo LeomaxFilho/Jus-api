@@ -1,10 +1,11 @@
 import os
 import sys
 
+from dotenv import load_dotenv
+
 from docker.client import DockerClient
 from docker.errors import DockerException, NotFound
 from docker.models.containers import Container
-from dotenv import load_dotenv
 
 try:
     import docker
@@ -45,15 +46,15 @@ def start_docker_container() -> Container:
 
     try:
         container: Container = client.containers.get(CONTAINER_NAME)
-        container.reload()
+        # container.reload()
 
         if container.status != 'running':
             print(f'\ueb7b Starting Container, Already exists: {CONTAINER_NAME}...')
             container.start()
+            return container
         else:
             print(f'\uf058 Container is already running: {CONTAINER_NAME}.')
-
-            # return container
+            return container
 
     except NotFound:
         try:
