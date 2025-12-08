@@ -6,17 +6,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Article',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('article', models.TextField()),
                 ('chunk', pgvector.django.vector.VectorField(dimensions=3000)),
                 ('last_change', models.DateField()),
@@ -25,7 +28,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Law',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('publish_date', models.DateField()),
                 ('name', models.CharField(max_length=256)),
                 ('number', models.IntegerField()),
@@ -51,27 +59,45 @@ class Migration(migrations.Migration):
                 ('article', models.TextField()),
                 ('chunk', pgvector.django.vector.VectorField(dimensions=3000)),
                 ('paragraph_number', models.IntegerField()),
-                ('id_article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, primary_key=True, related_name='paragraph', serialize=False, to='api.article', unique=True)),
+                (
+                    'id_article',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        related_name='paragraph',
+                        serialize=False,
+                        to='api.article',
+                        unique=True,
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
             model_name='article',
             name='id_law',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.law'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.law'
+            ),
         ),
         migrations.AddField(
             model_name='law',
             name='id_status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='law', to='api.status'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name='law', to='api.status'
+            ),
         ),
         migrations.AddField(
             model_name='article',
             name='id_status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.status'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.status'
+            ),
         ),
         migrations.AddField(
             model_name='article',
             name='id_theme',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.theme'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name='article', to='api.theme'
+            ),
         ),
     ]
