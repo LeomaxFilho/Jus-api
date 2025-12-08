@@ -22,7 +22,7 @@ dev = [
 ]
 
 [tool.basedpyright]
-typeCheckingMode = "strict"
+typeCheckingMode = "recommended"
 
 [tool.ruff.format]
 quote-style = "single"

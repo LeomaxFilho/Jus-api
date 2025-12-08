@@ -30,6 +30,7 @@ def start_docker_container() -> Container:
     CONTAINER_NAME = 'laws'
     IMAGE_NAME = 'laws-postegresql:latest'
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    POSTGRES_USER = os.getenv('POSTGRES_USER')
     DOCKERFILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
     try:
@@ -52,9 +53,9 @@ def start_docker_container() -> Container:
         else:
             print(f'\uf058 Container is already running: {CONTAINER_NAME}.')
 
-    except NotFound:
-        print(f'\uf058 Container is running: {CONTAINER_NAME}.')
+            # return container
 
+    except NotFound:
         try:
             running_container = client.containers.run(
                 image=IMAGE_NAME,
@@ -62,16 +63,20 @@ def start_docker_container() -> Container:
                 auto_remove=True,
                 detach=True,
                 ports={'5432/tcp': 5432},
-                environment=[f'POSTGRES_PASSWORD={POSTGRES_PASSWORD}'],
+                environment=[
+                    f'POSTGRES_USER={POSTGRES_USER}',
+                    f'POSTGRES_PASSWORD={POSTGRES_PASSWORD}',
+                    'POSTGRES_DB=default',
+                ],
             )
 
-            print('\uf058 Container criado e iniciado com sucesso.')
-
-            return running_container
+            print('\uf058 Container successfull started.')
 
         except Exception as e:
-            print(f'\uea87 Star/Creating container error: {e}')
+            print(f'\uea87 Start/Creating container error: {e}')
             sys.exit(1)
+
+        return running_container
 
 
 def stop_docker_container(container: Container):
@@ -86,5 +91,4 @@ def stop_docker_container(container: Container):
 
 if __name__ == '__main__':
     container = start_docker_container()
-
     # stop_docker_container(container)
