@@ -21,6 +21,7 @@ dev = [
     "pytest>=9.0.1",
     "aiohttp>=3.13.2",
     "asyncio>=4.0.0",
+    "beautifulsoup4>=4.14.3",
 ]
 
 [tool.basedpyright]
